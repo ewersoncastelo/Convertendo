@@ -11,30 +11,42 @@ struct ContentView: View {
     @State private var valueToConvert = ""
     @State private var chooseType = 0
     @State private var typeUnit = 0
-    
-    @State var show = false
-    
-    let chooseTypes = ["Meters", "Farenheit"]
-    let typesUnits = ["Centimeters", "Milimeters"]
+        
+    let chooseTypes = ["Kilometers", "Farenheit"]
+    let typesUnits = ["Meters", "Decimeters", "Centimeters", "Milimeters"]
 
+    var sizeMeters: Measurement<UnitLength> {
+        let valueData = Double(valueToConvert) ?? 0
+        let heighFeet = Measurement(value: valueData, unit: UnitLength.kilometers)
+        let sizeMeters = heighFeet.converted(to: UnitLength.meters)
+        return sizeMeters
+    }
+    
+    var sizeDecimeters: Measurement<UnitLength> {
+        let valueData = Double(valueToConvert) ?? 0
+        let heighFeet = Measurement(value: valueData, unit: UnitLength.kilometers)
+        let sizeDecimeters = heighFeet.converted(to: UnitLength.decimeters)
+        return sizeDecimeters
+    }
+    
     var sizeCentimeters: Measurement<UnitLength> {
         let valueData = Double(valueToConvert) ?? 0
-        let heighFeet = Measurement(value: valueData, unit: UnitLength.meters)
+        let heighFeet = Measurement(value: valueData, unit: UnitLength.kilometers)
         let sizeCentimeters = heighFeet.converted(to: UnitLength.centimeters)
         return sizeCentimeters
     }
     
     var sizeMilimeters: Measurement<UnitLength> {
         let valueData = Double(valueToConvert) ?? 0
-        let heighFeet = Measurement(value: valueData, unit: UnitLength.meters)
+        let heighFeet = Measurement(value: valueData, unit: UnitLength.kilometers)
         let sizeMilimeters = heighFeet.converted(to: UnitLength.millimeters)
         return sizeMilimeters
     }
     
-    var temperature: Measurement<UnitTemperature> {
+    var tempCelsius: Measurement<UnitTemperature> {
         let valueData = Double(valueToConvert) ?? 0
-        let temperature = Measurement(value: valueData, unit: UnitTemperature.celsius)
-        let temperatureFahrenheit = temperature.converted(to: UnitTemperature.fahrenheit)
+        let temperature = Measurement(value: valueData, unit: UnitTemperature.fahrenheit)
+        let temperatureFahrenheit = temperature.converted(to: UnitTemperature.celsius)
         return temperatureFahrenheit
     }
     
@@ -50,29 +62,39 @@ struct ContentView: View {
                 }
                 
                 Section(header: Text("Please type you data in the form")){
-                    TextField("Entry with the value", text: $valueToConvert)
+                    TextField("0", text: $valueToConvert)
                         .keyboardType(.decimalPad)
                 }
                 
-                Picker("Choose unit type", selection: $typeUnit){
-                    ForEach(0..<typesUnits.count){
-                        Text("\(typesUnits[$0])")
-                    }
-                }.pickerStyle(SegmentedPickerStyle())
+                if chooseType == 0 {
+                    Picker("Choose unit type", selection: $typeUnit){
+                        ForEach(0..<typesUnits.count){
+                            Text("\(typesUnits[$0])")
+                        }
+                    }.pickerStyle(SegmentedPickerStyle())
+                }
 
 
                 Section{
-                    if (chooseType == 0) && (typeUnit == 0) {
+                    if(chooseType == 0) && (typeUnit == 0){
+                        Text("\(sizeMeters.description)")
+                    }
+                    
+                    if(chooseType == 0) && (typeUnit == 1){
+                        Text("\(sizeDecimeters.description)")
+                    }
+                    
+                    if (chooseType == 0) && (typeUnit == 2) {
                         Text("\(sizeCentimeters.description)")
                     }
                     
-                    if (chooseType == 0) && (typeUnit == 1) {
+                    if (chooseType == 0) && (typeUnit == 3) {
                         Text("\(sizeMilimeters.description)")
                     }
                     
-//                    if chooseType == 1 {
-//                        Text("\(temperature.value,  specifier: "%.2f") Cº")
-//                    }
+                    if chooseType == 1 {
+                        Text("\(tempCelsius.value,  specifier: "%.2f") Cº")
+                    }
                 }
                 
             }
